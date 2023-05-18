@@ -11,7 +11,8 @@ export msd, unfold!
 #== MSD ==#
 """
     msd(x::AbstractMatrix, [lags])
-Return the mean squared displacement of each column of `x` at lag times `lags`.
+Return the time-averaged mean squared displacement of each column
+of `x` at lag times `lags`.
 """
 function StatsBase.msd(x::AbstractMatrix, lags::AbstractVector{<:Integer}=0:size(x,1)-1)
     mapslices(y -> msd(y, lags), x, dims=1)
@@ -19,7 +20,7 @@ end
 
 """
     msd(x::AbstractVector, [lags])
-Return the mean squared displacement of `x` at lag times `lags`.
+Return the time-averaged mean squared displacement of `x` at lag times `lags`.
 If not specified `lags` defaults to `0:length(x)-1`.
 """
 function StatsBase.msd(x::AbstractVector, lags::AbstractVector{<:Integer}=0:size(x,1)-1)
@@ -46,18 +47,18 @@ a FFT-based calculation when the timeseries is large.
 @inline smartacf(x, lags) = size(x,1) < 1024 ? acf(x, lags) : fftacf(x, lags)
 
 #== Autocovariance function with FFT ==#
-function fftacf(x::AbstractVector{<:Tuple}, lags=0:size(x,1)-1)
-    T = float(eltype(eltype(x)))
+function fftacf(x::AbstractVector{<:Number}, lags=0:size(x,1)-1)
+    S = float(eltype(x))
+    l = size(x,1)
+    A = conv(x, reverse(x))
+    [S(A[k+l]/(l-k)) for k in lags]
+end
+function fftacf(x::AbstractVector{T}, lags=0:size(x,1)-1) where {T<:Union{AbstractVector,NTuple}}
+    S = float(eltype(eltype(x)))
     l = size(x,1)
     y = [getindex.(x,i) for i in eachindex(first(x))]
     A = sum([conv(s, reverse(s)) for s in y])
-    [T(A[k+l]/(l-k)) for k in lags]
-end
-function fftacf(x::AbstractVector{<:Number}, lags=0:size(x,1)-1)
-    T = float(eltype(x))
-    l = size(x,1)
-    A = conv(x, reverse(x))
-    [T(A[k+l]/(l-k)) for k in lags]
+    [S(A[k+l]/(l-k)) for k in lags]
 end
 
 #== Autocovariance function ==#
@@ -68,18 +69,18 @@ end
     acf(x, [lags])
 Return the autocovariance function of timeseries `x` at lag times `lags`.
 """
-function acf(x::AbstractVector{<:Number}, lags::AbstractVector{<:Integer})
+function acf(x::AbstractVector{<:Number}, lags=0:size(x,1)-1)
     S = float(eltype(x))
     out = Vector{S}(undef, length(lags))
     acf!(out, x, lags)
 end
-function acf(x::AbstractVector{T}, lags::AbstractVector{<:Integer}) where {T<:Union{AbstractVector,NTuple}}
+function acf(x::AbstractVector{T}, lags=0:size(x,1)-1) where {T<:Union{AbstractVector,NTuple}}
     S = float(eltype(eltype(x)))
     out = Vector{S}(undef, length(lags))
     acf!(out, x, lags)
 end
 
-function acf!(r::AbstractVector, x::AbstractVector, lags::AbstractVector{<:Integer})
+function acf!(r::AbstractVector, x::AbstractVector, lags)
     lx = length(x)
     m = length(lags)
     @assert length(r) == m
