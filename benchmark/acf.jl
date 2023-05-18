@@ -2,7 +2,7 @@ using BenchmarkTools
 using MeanSquaredDisplacement
 
 ## Setup
-N = 2 .^ (4:2:18)
+N = 2 .^ (4:2:16)
 b_dummy = @benchmark nothing
 braw = [b_dummy for _ in N]
 bfft = [b_dummy for _ in N]
