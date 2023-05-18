@@ -26,8 +26,5 @@ tmin, tmax = 100, 200
 steps = [-1, +1]
 # trajectories of random length between tmin and tmax
 x = [cumsum(rand(steps, rand(tmin:tmax))) for _ in 1:ntrajectories]
-# random starting time for each trajectory
-t₀ = rand(0:50, ntrajectories)
-
-emsd(x, t₀)
+emsd(x)
 ```

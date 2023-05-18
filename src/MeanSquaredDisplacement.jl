@@ -10,27 +10,24 @@ export emsd, imsd, unfold!
 
 #== Ensemble MSD ==#
 """
-    emsd(x::AbstractVector, t₀::AbstractVector)
+    emsd(x::AbstractVector)
 Return the ensemble average of the mean squared displacement of each vector in `x`.
-The timeseries in `x` can have different lengths, and different starting times `t₀`.
+`x` can contain timeseries of different lengths.
 """
-function emsd(x::AbstractVector{T}, t₀::AbstractVector{<:Integer}) where {T<:AbstractVector}
-    @assert length(x) == length(t₀)
+function emsd(x::AbstractVector{T}) where {T<:AbstractVector}
     individual_msds = imsd.(x)
-    indices = [t₀[i] .+ eachindex(individual_msds[i]) .- 1 for i in eachindex(t₀)]
-    t₁, t₂ = extrema(vcat(indices...))
+    tmax = maximum(length.(x))
     S = eltype(first(individual_msds))
-    out = AxisArray(zeros(S, t₂-t₁+1), t=t₁:t₂)
-    counter = AxisArray(zeros(Int, t₂-t₁+1), t₁:t₂)
-    for i in eachindex(t₀)
-        for j in eachindex(x[i])
-            t = t₀[i]+j-1
-            out[atvalue(t)] += individual_msds[i][j]
-            counter[atvalue(t)] += 1
+    out = zeros(S, tmax)
+    counter = zeros(Int, tmax)
+    for i in eachindex(x)
+        for t in eachindex(x[i])
+            out[t] += individual_msds[i][t]
+            counter[t] += 1
         end
     end
-    for t in t₁:t₂
-        out[atvalue(t)] /= counter[atvalue(t)]
+    for t in eachindex(out)
+        out[t] /= counter[t]
     end
     return out
 end
