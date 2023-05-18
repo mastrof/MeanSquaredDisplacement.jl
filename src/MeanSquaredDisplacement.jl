@@ -6,24 +6,24 @@ using DSP
 using OffsetArrays
 using StatsBase
 
-export msd, unfold!
+export imsd, unfold!
 
 #== MSD ==#
 """
-    msd(x::AbstractMatrix, [lags])
+    imsd(x::AbstractMatrix, [lags])
 Return the time-averaged mean squared displacement of each column
 of `x` at lag times `lags`.
 """
-function StatsBase.msd(x::AbstractMatrix, lags::AbstractVector{<:Integer}=0:size(x,1)-1)
-    mapslices(y -> msd(y, lags), x, dims=1)
+function imsd(x::AbstractMatrix, lags::AbstractVector{<:Integer}=0:size(x,1)-1)
+    mapslices(y -> imsd(y, lags), x, dims=1)
 end
 
 """
-    msd(x::AbstractVector, [lags])
+    imsd(x::AbstractVector, [lags])
 Return the time-averaged mean squared displacement of `x` at lag times `lags`.
 If not specified `lags` defaults to `0:length(x)-1`.
 """
-function StatsBase.msd(x::AbstractVector, lags::AbstractVector{<:Integer}=0:size(x,1)-1)
+function imsd(x::AbstractVector, lags::AbstractVector{<:Integer}=0:size(x,1)-1)
     l = length(x)
     S₂ = smartacf(x, lags)
     D = OffsetArray([0.0; dot.(x,x); 0.0], -1:l)
