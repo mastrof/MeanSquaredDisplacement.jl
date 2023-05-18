@@ -13,6 +13,7 @@ export imsd, unfold!
     imsd(x::AbstractMatrix, [lags])
 Return the time-averaged mean squared displacement of each column
 of `x` at lag times `lags`.
+If not specified `lags` defaults to `0:size(x,1)-1`.
 """
 function imsd(x::AbstractMatrix, lags::AbstractVector{<:Integer}=0:size(x,1)-1)
     mapslices(y -> imsd(y, lags), x, dims=1)
