@@ -49,16 +49,38 @@ a FFT-based calculation when the timeseries is large.
 #== Autocovariance function with FFT ==#
 function fftacf(x::AbstractVector{<:Number}, lags=0:size(x,1)-1)
     S = float(eltype(x))
-    l = size(x,1)
+    out = Vector{S}(undef, length(lags))
+    fftacf!(out, x, lags)
+end
+function fftacf!(r::AbstractVector, x::AbstractVector, lags)
+    lx = length(x)
+    m = length(lags)
+    @assert length(r) == m
+    StatsBase.check_lags(lx, lags)
     A = conv(x, reverse(x))
-    [S(A[k+l]/(l-k)) for k in lags]
+    for k in 1:m
+        δ = lags[k]
+        r[k] = A[δ+lx]/(lx-δ)
+    end
+    return r
 end
 function fftacf(x::AbstractVector{T}, lags=0:size(x,1)-1) where {T<:Union{AbstractVector,NTuple}}
     S = float(eltype(eltype(x)))
-    l = size(x,1)
+    out = Vector{S}(undef, length(lags))
+    fftacf!(out, x, lags)
+end
+function fftacf!(r::AbstractVector, x::AbstractVector{T}, lags) where {T<:Union{AbstractVector,NTuple}}
+    lx = length(x)
+    m = length(lags)
+    @assert length(r) == m
+    StatsBase.check_lags(lx, lags)
     y = [getindex.(x,i) for i in eachindex(first(x))]
     A = sum([conv(s, reverse(s)) for s in y])
-    [S(A[k+l]/(l-k)) for k in lags]
+    for k in 1:m
+        δ = lags[k]
+        r[k] = A[δ+lx]/(lx-δ)
+    end
+    return r
 end
 
 #== Autocovariance function ==#
@@ -86,7 +108,8 @@ function acf!(r::AbstractVector, x::AbstractVector, lags)
     @assert length(r) == m
     StatsBase.check_lags(lx, lags)
     for k in 1:m
-        r[k] = StatsBase._autodot(x, lx, lags[k]) / (lx-lags[k])
+        δ = lags[k]
+        r[k] = StatsBase._autodot(x, lx, δ) / (lx-δ)
     end
     return r
 end
