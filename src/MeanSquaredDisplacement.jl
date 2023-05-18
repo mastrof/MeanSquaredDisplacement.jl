@@ -39,7 +39,7 @@ of `x` at lag times `lags`.
 If not specified `lags` defaults to `0:size(x,1)-1`.
 """
 function emsd(x::AbstractMatrix, lags::AbstractVector{<:Integer}=0:size(x,1)-1)
-    vec(mean(mapslices(y -> imsd(y, lags), x, dims=1), dims=2))
+    vec(mean(imsd(x, lags), dims=2))
 end
 
 
