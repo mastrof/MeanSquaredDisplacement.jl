@@ -2,7 +2,7 @@
     unfold!(x::AbstractVector, P)
 Unfold timeseries `x` from a domain of periodicity `P`.
 """
-function unfold!(x::AbstractVector, P::Real)
+function unfold!(x::AbstractVector, P)
     indices = eachindex(x)
     ind_prev = @view indices[1:end-1]
     ind_next = @view indices[2:end]

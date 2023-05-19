@@ -45,4 +45,31 @@ using Test
     mb = [imsd(b); repeat([0.0], na-nb)]
     divisor = [repeat([2], nb); repeat([1], na-nb)]
     @test m ≈ (ma .+ mb) ./ divisor
+
+    @testset "Unfolding" begin
+        function wrap(x,L)
+            s = x
+            while !(0 ≤ s < L)
+                δ = s < 0 ? +L : s > L ? -L : 0
+                s += δ
+            end
+            return s
+        end
+        x = cumsum(rand(1000))
+        # wrap trajectory between 0 and L
+        L = 10
+        y = wrap.(x, L)
+        z = copy(y)
+        unfold!(y, L)
+        @test y ≈ x
+
+        Lx, Ly = 8.6, 13.0
+        x = (1:100) .% Lx
+        y = (1:100) .% Ly
+        traj = Tuple.(zip(x,y))
+        utraj = copy(traj)
+        unfold!(utraj, (Lx, Ly))
+        @test first.(utraj) == (1:100)
+        @test last.(utraj) == (1:100)
+    end
 end
