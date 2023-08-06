@@ -30,7 +30,7 @@ using Test
     @test m ≈ m2
 
     # emsd is the average of imsds
-    using StatsBase: mean
+    using Statistics: mean
     @test emsd(x) ≈ vec(mean(m2, dims=2))
 
     x = [collect(1:10), collect(1:10)]
