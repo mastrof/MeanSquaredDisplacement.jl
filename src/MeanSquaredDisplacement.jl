@@ -4,7 +4,7 @@ using AxisArrays
 using LinearAlgebra: dot
 using DSP
 using OffsetArrays
-using StatsBase
+using Statistics: mean
 
 export emsd, imsd, unfold!
 
@@ -38,7 +38,7 @@ Return the ensemble average of the mean squared displacement of each column
 of `x` at lag times `lags`.
 If not specified `lags` defaults to `0:size(x,1)-1`.
 """
-function emsd(x::AbstractMatrix, lags::AbstractVector{<:Integer}=0:size(x,1)-1)
+function emsd(x::AbstractMatrix, lags=0:size(x,1)-1)
     vec(mean(imsd(x, lags), dims=2))
 end
 
@@ -49,16 +49,16 @@ end
 Return the mean squared displacement of each column of `x` at lag times `lags`.
 If not specified `lags` defaults to `0:size(x,1)-1`.
 """
-function imsd(x::AbstractMatrix, lags::AbstractVector{<:Integer}=0:size(x,1)-1)
+function imsd(x::AbstractMatrix, lags=0:size(x,1)-1)
     mapslices(y -> imsd(y, lags), x, dims=1)
 end
 
 """
     imsd(x::AbstractVector, [lags])
 Return the mean squared displacement of `x` at lag times `lags`.
-If not specified `lags` defaults to `0:length(x)-1`.
+If not specified `lags` defaults to `0:size(x,1)-1`.
 """
-function imsd(x::AbstractVector, lags::AbstractVector{<:Integer}=0:size(x,1)-1)
+function imsd(x::AbstractVector, lags=0:size(x,1)-1)
     l = length(x)
     S₂ = acf(x, lags)
     D = OffsetArray([0.0; dot.(x,x); 0.0], -1:l)
@@ -75,6 +75,7 @@ end
 
 
 include("acf.jl")
+include("autodot.jl")
 include("unfold.jl")
 
 end # module MeanSquaredDisplacement

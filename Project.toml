@@ -1,20 +1,19 @@
 name = "MeanSquaredDisplacement"
 uuid = "13c93d70-909c-440c-af92-39d48ffa2ba2"
 authors = ["Riccardo Foffi <riccardo.foffi@protonmail.com>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 AxisArrays = "39de3d68-74b9-583c-8d2d-e117c070f3a9"
 DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 OffsetArrays = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
-StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [compat]
 AxisArrays = "0.4"
 DSP = "0.7"
 OffsetArrays = "1"
-StatsBase = "0.33, 0.34"
 julia = "1"
 
 [extras]

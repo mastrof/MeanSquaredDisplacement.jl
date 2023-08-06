@@ -16,7 +16,7 @@ function fftacf!(r::AbstractVector, x::AbstractVector, lags)
     lx = length(x)
     m = length(lags)
     @assert length(r) == m
-    StatsBase.check_lags(lx, lags)
+    check_lags(lx, lags)
     A = conv(x, reverse(x))
     for k in 1:m
         δ = lags[k]
@@ -34,7 +34,7 @@ function fftacf!(r::AbstractVector, x::AbstractVector{T}, lags) where {T<:Union{
     lx = length(x)
     m = length(lags)
     @assert length(r) == m
-    StatsBase.check_lags(lx, lags)
+    check_lags(lx, lags)
     y = [getindex.(x,i) for i in eachindex(first(x))]
     A = sum([conv(s, reverse(s)) for s in y])
     for k in 1:m
@@ -43,6 +43,11 @@ function fftacf!(r::AbstractVector, x::AbstractVector{T}, lags) where {T<:Union{
     end
     return r
 end
+
+check_lags(lx::Int, lags::AbstractVector) = (
+    maximum(lags) < lx ||
+    error("lags must be less than the sample length.")
+)
 
 #== Autocovariance function with autodot ==#
 # We follow the structure of `StatsBase.autocov` but
@@ -63,17 +68,10 @@ function rawacf!(r::AbstractVector, x::AbstractVector, lags)
     lx = length(x)
     m = length(lags)
     @assert length(r) == m
-    StatsBase.check_lags(lx, lags)
+    check_lags(lx, lags)
     for k in 1:m
         δ = lags[k]
-        r[k] = StatsBase._autodot(x, lx, δ) / (lx-δ)
+        r[k] = _autodot(x, lx, δ) / (lx-δ)
     end
     return r
 end
-
-# Extend to accept non-scalar timeseries
-StatsBase._autodot(x::AbstractVector{T}, lx::Int, l::Int) where {T<:Union{AbstractVector,NTuple}} =
-    dot(view(x, 1:(lx-l)), view(x, (1+l):lx))
-
-
-
