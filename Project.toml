@@ -1,7 +1,7 @@
 name = "MeanSquaredDisplacement"
 uuid = "13c93d70-909c-440c-af92-39d48ffa2ba2"
 authors = ["Riccardo Foffi <riccardo.foffi@protonmail.com>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 AxisArrays = "39de3d68-74b9-583c-8d2d-e117c070f3a9"
