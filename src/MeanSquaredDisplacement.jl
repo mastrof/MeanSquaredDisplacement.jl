@@ -1,8 +1,8 @@
 module MeanSquaredDisplacement
 
+using Autocorrelations
 using AxisArrays
 using LinearAlgebra: dot
-using DSP
 using OffsetArrays
 using Statistics: mean
 
@@ -74,8 +74,6 @@ function imsd(x::AbstractVector, lags=0:size(x,1)-1)
 end
 
 
-include("acf.jl")
-include("autodot.jl")
 include("unfold.jl")
 
 end # module MeanSquaredDisplacement

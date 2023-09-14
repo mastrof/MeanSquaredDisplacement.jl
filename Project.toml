@@ -4,16 +4,17 @@ authors = ["Riccardo Foffi <riccardo.foffi@protonmail.com>"]
 version = "0.1.1"
 
 [deps]
+Autocorrelations = "b9118d5e-f165-4cbd-b2ae-b030566b7b26"
 AxisArrays = "39de3d68-74b9-583c-8d2d-e117c070f3a9"
-DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 OffsetArrays = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [compat]
+Autocorrelations = "0.1"
 AxisArrays = "0.4"
-DSP = "0.7"
 OffsetArrays = "1"
+Statistics = "1"
 julia = "1"
 
 [extras]
