@@ -62,6 +62,8 @@ using Test
         z = copy(y)
         unfold!(y, L)
         @test y ≈ x
+        y2 = unfold(x, L)
+        @test y2 == y
 
         Lx, Ly = 8.6, 13.0
         x = (1:100) .% Lx
