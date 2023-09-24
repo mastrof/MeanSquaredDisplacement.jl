@@ -1,49 +1,59 @@
 """
+    unfold(x::AbstractVector, P)
+Unfold timeseries `x` from a periodic domain extending from `0` to `P`.
+"""
+function unfold(x::AbstractVector, P)
+    y = deepcopy(x)
+    unfold!(y, P)
+    return y
+end
+
+"""
     unfold!(x::AbstractVector, P)
-Unfold timeseries `x` from a domain of periodicity `P`.
+Unfold timeseries `x` from a periodic domain extending from `0` to `P`.
+The periodicity `P` can be either a real number (for a cubic domain) or
+a collection (`AbstractVector` or `NTuple`) with one value for each dimension.
 """
 function unfold!(x::AbstractVector, P)
     indices = eachindex(x)
     ind_prev = @view indices[1:end-1]
     ind_next = @view indices[2:end]
     for (i,j) in zip(ind_prev, ind_next)
-        xₚ = x[i]
-        xₙ = x[j]
-        x[j] = unfold(xₙ, xₚ, P)
+        x0 = x[i]
+        x1 = x[j]
+        x[j] = unfold(x1, x0, P)
     end
     return x
 end
 
 NTupleOrVec = Union{NTuple{D,<:Real},AbstractVector{<:Real}} where D
-function unfold(xₙ::AbstractVector, xₚ::AbstractVector, P::Real)
-    @assert length(xₙ) == length(xₚ)
-    map(i -> unfold(xₙ[i], xₚ[i], P), eachindex(xₙ))
+function unfold(x1::AbstractVector, x0::AbstractVector, P::Real)
+    @assert length(x1) == length(x0)
+    map(i -> unfold(x1[i], x0[i], P), eachindex(x1))
 end
-function unfold(xₙ::NTuple{D}, xₚ::NTuple{D}, P::Real) where D
-    ntuple(i -> unfold(xₙ[i], xₚ[i], P), D)
+function unfold(x1::NTuple{D}, x0::NTuple{D}, P::Real) where D
+    ntuple(i -> unfold(x1[i], x0[i], P), D)
 end
-function unfold(xₙ::AbstractVector, xₚ::AbstractVector, P::NTupleOrVec)
-    @assert length(xₙ) == length(xₚ) == length(P)
-    map(i -> unfold(xₙ[i], xₚ[i], P[i]), eachindex(xₙ))
+function unfold(x1::AbstractVector, x0::AbstractVector, P::NTupleOrVec)
+    @assert length(x1) == length(x0) == length(P)
+    map(i -> unfold(x1[i], x0[i], P[i]), eachindex(x1))
 end
-function unfold(xₙ::NTuple{D}, xₚ::NTuple{D}, P::NTupleOrVec) where D
+function unfold(x1::NTuple{D}, x0::NTuple{D}, P::NTupleOrVec) where D
     @assert D == length(P)
-    ntuple(i -> unfold(xₙ[i], xₚ[i], P[i]), D)
+    ntuple(i -> unfold(x1[i], x0[i], P[i]), D)
 end
 
 """
-    unfold(xₙ::Real, xₚ::Real, P::Real)
-Unfold the value of `xₙ` with respect to `xₚ` from a
+    unfold(x1::Real, x0::Real, P::Real)
+Unfold the value of `x1` with respect to `x0` from a
 domain of periodicity `P`.
 """
-function unfold(xₙ::Real, xₚ::Real, P::Real)
-    Δx = xₙ - xₚ
-    a = round(abs(Δx/P))
-    if abs(Δx) > P/2
-        return xₙ - a*P*sign(Δx)
+function unfold(x1::Real, x0::Real, P::Real)
+    dx = x1 - x0
+    a = round(abs(dx / P))
+    if abs(dx) > P/2
+        return x1 - a*P*sign(dx)
     else
-        return xₙ
+        return x1
     end
 end
-
-
