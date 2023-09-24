@@ -8,10 +8,10 @@ mean squared displacement (MSD) of timeseries.
 `imsd` is used to evaluate the MSD of individual timeseries,
 while `emsd` evaluates ensemble averages.
 
-For short timeseries, the MSD is computed using a plain correlation algorithm
-(as implemented in StatsBase.jl) with complexity O(N^2), while for larger samples,
-an FFT-based fast correlation algorithm is used, with complexity O(NlogN).
-This ensures good performance for all sample sizes.
+MeanSquaredDisplacement.jl relies on [Autocorrelations.jl](https://github.com/mastrof/Autocorrelations.jl)
+to compute MSDs, which uses a plain correlation algorithm (O(N^2)) for short timeseries
+and a FFT-based algorithm (O(NlogN)) for larger ones, ensuring good performance
+for all sample sizes.
 
 The MSD of non-scalar timeseries can also be evaluated
 (equivalent to summing the MSD of each scalar element), but it's not yet optimized.
