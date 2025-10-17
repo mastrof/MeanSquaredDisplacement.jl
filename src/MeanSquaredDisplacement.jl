@@ -6,7 +6,7 @@ using LinearAlgebra: dot
 using OffsetArrays
 using Statistics: mean
 
-export emsd, imsd, unfold, unfold!
+export emsd, imsd
 
 #== Ensemble MSD ==#
 """
