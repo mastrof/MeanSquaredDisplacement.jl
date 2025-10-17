@@ -12,7 +12,9 @@ using Test
     @test mlags ≈ m[lags.+1]
 
     x = collect(1:10_000)
-    @test imsd(x) ≈ (eachindex(x) .- 1).^2
+    m_large = imsd(x)
+    @test iszero(first(m_large))
+    @test m_large ≈ (eachindex(x) .- 1).^2
 
     # non-scalar msd is the sum of each dimension's msd
     x = [(i,0) for i in 1:10]
