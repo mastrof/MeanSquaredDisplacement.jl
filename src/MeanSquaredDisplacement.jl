@@ -70,7 +70,11 @@ function imsd(x::AbstractVector, lags=0:size(x,1)-1)
             S₁[atvalue(k)] = Q / (l-k)
         end
     end
-    @. S₁ - 2S₂
+    MSD = @. S₁ - 2S₂
+    if iszero(first(lags))
+        MSD[1] = zero(eltype(MSD))
+    end
+    MSD
 end
 
 end # module MeanSquaredDisplacement
